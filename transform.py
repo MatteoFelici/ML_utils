@@ -214,14 +214,14 @@ class imputer():
         self.transformations = {}
         if type(columns) == dict:
             for col in columns:
-                if data[col].dtype == 'O' and columns[col] ne 'mode':
+                if data[col].dtype == 'O' and columns[col] != 'mode':
                     raise ValueError('Column %s is categoric, cannot apply'
                                      'method %s.' % (col, columns[col]))
                 val = self.imp_dict(columns[col])(data, col)
                 self.transformations[col] = val
         else:
             for col in columns:
-                if data[col].dtype == 'O' and self.method ne 'mode':
+                if data[col].dtype == 'O' and self.method != 'mode':
                     raise ValueError('Column %s is categoric, cannot apply'
                                      'method %s.' % (col, self.method))
                 val = self.fun(data, col)
