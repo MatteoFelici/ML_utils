@@ -6,7 +6,7 @@ Package of the Machine Learning utilities for data description.
 - description: create table with columns names, modalities, types,
                number of missing values and mode/mean
 """
-
+import pandas as pd
 
 
 def freq_tab(data, row_var, col_var, margins=True, perc=None):

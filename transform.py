@@ -354,7 +354,7 @@ class woe_transformation():
                 old_c = prefix_old + col
                 data.rename(columns={col: old_c}, inplace=True)
 
-            default = np.mean(self.transformations[col].values())
+            default = np.mean(list(self.transformations[col].values()))
             data[new_c] = data[old_c].apply(lambda x:
                 self.transformations[col][x] if x in self.transformations[col].keys()
                 else default)
@@ -362,7 +362,7 @@ class woe_transformation():
         return data
 
 
-    def fit_transform(self, data, columns, target, event, replace=False,
+    def fit_transform(self, data, columns, target, event=1, replace=False,
                       prefix_old=None, prefix='woe'):
         """
         Parameters
