@@ -12,7 +12,6 @@ Package of the Machine Learning utilities for feature transformation.
 
 import pandas as pd
 import numpy as np
-from utils import isNaN
 
 
 class grouper():
@@ -39,7 +38,7 @@ class grouper():
         self.perc = perc
 
 
-    def fit(self, data, columns, label='other', event=None,
+    def fit(self, data, columns, label='other', target=None,
             event_labels=['low', 'medium', 'high'], event_cuts=[0.6, 1.4]):
         """
         Parameters
@@ -47,12 +46,12 @@ class grouper():
         data: training dataset
         columns: features to group
         label: label of the group if grouping is not based on target (default 'other')
-        event: level of the taget variable as the event (default None); if not definded,
+        target: taget variable (default None); if not definded,
                the grouped modalities are put in one single bucket
         event_cuts: N-list of cuts for target impact on single modality, to create
-                    N+1 buckets (only if event is defined)
+                    N+1 buckets (only if target is defined)
                     (default [0.6, 1.4])
-        event_labels: list with the N labels for the N buckets (only if event is defined),
+        event_labels: list with the N labels for the N buckets (only if target is defined),
                       its length must be 1 + length of event_cuts
                       (default ['low', 'medium', 'high'])
 
@@ -61,19 +60,20 @@ class grouper():
         self.columns = columns
         self.transformations = {}
 
-        if event == None:
+        if target == None:
             self.label = label
+            self.target = None
         else:
-            self.event = event
+            self.target = target
             self.event_labels = event_labels
             self.event_cuts = event_cuts
-            self.event_perc = sum(data[target] == event) / len(data)
+            self.event_perc = sum(data[self.target] == 1) / len(data)
 
             pairings = []
-            pairings.append(([0, event_cuts[0]], label[0]))
+            pairings.append(([0, event_cuts[0]], event_labels[0]))
             for i in range(1, len(event_cuts)):
-                pairings.append(([event_cuts[i-1], event_cuts[i]], label[i]))
-            pairings.append(([event_cuts[-1], 100], label[-1]))
+                pairings.append(([event_cuts[i-1], event_cuts[i]], event_labels[i]))
+            pairings.append(([event_cuts[-1], 100], event_labels[-1]))
 
 
         for col in columns:
@@ -85,14 +85,14 @@ class grouper():
 
             self.transformations[col] = {}
 
-            if event == None:
+            if target == None:
                 for elem in data[col].unique().tolist():
                     if elem in a:
                         self.transformations[col][elem] = self.label
                     else:
                         self.transformations[col][elem] = elem
             else:
-                vals = df.groupby(col)[target].mean()
+                vals = data.groupby(col)[self.target].mean()
                 for elem in data[col].unique().tolist():
                     if elem in a:
                         val = vals[elem]
@@ -120,10 +120,10 @@ class grouper():
         for col in self.columns:
             if col not in data.columns:
                 raise ValueError('Column %s not in input data features.' % col)
-        if self.event == None:
+        if self.target == None:
             l = self.label
         else:
-            l = self.label[int(len(self.label) / 2)]
+            l = self.event_labels[int(len(self.event_labels) / 2)]
 
         for col in self.columns:
             data[col] = data[col].apply(lambda x:
