@@ -1,5 +1,5 @@
 """
-@author: Matteo Felici - matteo.felici@quixa.it
+@author: Matteo Felici - matteofelici87@gmail.com
 
 Package of the Machine Learning utilities for data description.
 - freq_tab: creates table of (relative) frequency
@@ -16,7 +16,7 @@ def freq_tab(data, row_var, col_var, margins=True, perc=None):
     the relative frequency.
 
     Parameters
-    -----------
+    ----------
     data: pandas DataFrame
     row_var: feature of data to put in rows
     col_var: feature of data to put in columns
@@ -62,13 +62,13 @@ def description(data, columns=None, complete=False, report=True, pr=True):
     pr: if True, it prints all the infos (default True)
 
     Output
-    -----------
+    ------
     rep: pandas DataFrame with feature infos (only if report == True)
     """
 
     rep = pd.DataFrame(columns=['column', 'modalities', 'type', 'missing', 'mode / mean'])
 
-    if columns == None:
+    if columns is None:
         columns = data.columns
     elif type(columns) != list:
         columns = [columns]
